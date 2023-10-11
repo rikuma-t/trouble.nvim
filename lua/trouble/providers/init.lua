@@ -36,10 +36,14 @@ function M.get(win, buf, cb, options)
     return {}
   end
 
+  local cwd = vim.loop.fs_realpath(vim.fn.getcwd())
+  local realpaths = {}
   local sort_keys = vim.list_extend({
     function(item)
-      local cwd = vim.loop.fs_realpath(vim.fn.getcwd())
-      local path = vim.loop.fs_realpath(item.filename)
+      if not realpaths[item.filename] then
+        realpaths[item.filename] = vim.loop.fs_realpath(item.filename)
+      end
+      local path = realpaths[item.filename]
       if not path then
         return 200
       end
